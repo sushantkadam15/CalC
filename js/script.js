@@ -23,7 +23,6 @@ const inputHistoryDisplay = document.getElementById("inputHistory");
 
 // Initialize variables to store user input and the current number being entered.
 let userInputDisplay = "";
-let currentNumber = "";
 let inputHistory = "";
 let lastInputEquals = false;
 
@@ -36,7 +35,6 @@ function roundToMaxDecimalPlaces(number, maxDecimals) {
 // Function to capture the user input and update the display accordingly.
 const captureUserInput = (currentInput) => {
   userInputDisplay += currentInput;
-  currentNumber += currentInput;
 };
 
 //Resets user input display and history
@@ -48,6 +46,7 @@ const resetDisplay = () => {
 // Function to handle button clicks and perform appropriate actions.
 const handleButtonClick = (buttonID) => {
   const currentInput = buttonValues[buttonID];
+
   // If the button is a number capture the input
   if (typeof currentInput == "number" || currentInput == ".") {
     if (lastInputEquals == false) {
