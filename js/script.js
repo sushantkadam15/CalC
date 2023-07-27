@@ -25,6 +25,7 @@ const inputHistoryDisplay = document.getElementById("inputHistory");
 let userInputDisplay = "";
 let currentNumber = "";
 let inputHistory = "";
+let lastInputEquals = false;
 
 // Function to round a number to a specific number of decimal places.
 function roundToMaxDecimalPlaces(number, maxDecimals) {
@@ -38,23 +39,37 @@ const captureUserInput = (currentInput) => {
   currentNumber += currentInput;
 };
 
+//Resets user input display and history
+const resetDisplay = () => {
+  userInputDisplay = "";
+  inputHistoryDisplay.innerText = "";
+};
+
 // Function to handle button clicks and perform appropriate actions.
 const handleButtonClick = (buttonID) => {
   const currentInput = buttonValues[buttonID];
-  if (
-    typeof currentInput == "number" ||
-    currentInput == "." ||
+  // If the button is a number capture the input
+  if (typeof currentInput == "number" || currentInput == ".") {
+    if (lastInputEquals == false) {
+      captureUserInput(currentInput);
+    } else if (lastInputEquals == true) {
+      // Resets the history and user input display if the user directly presses number instead of further calculation
+      resetDisplay();
+      lastInputEquals = false;
+      captureUserInput(currentInput);
+    }
+    //If the input is a valid operator, capture the input.
+  } else if (
     buttonID == "addition" ||
     buttonID == "subtraction" ||
     buttonID == "multiplication" ||
     buttonID == "division"
   ) {
-    // If the button is a number or a valid operator, capture the input.
+    lastInputEquals = false; // If the last input was "Equals to: and user wishes to continue the calculation -
     captureUserInput(currentInput);
   } else if (buttonID == "allClear") {
     // If the button is the "All Clear" button, reset the user input and history.
-    userInputDisplay = "";
-    inputHistoryDisplay.innerText = "";
+    resetDisplay();
   } else if (buttonID == "backspace") {
     // If the button is the "Backspace" button, remove the last character from the user input.
     userInputDisplay = userInputDisplay.substring(
@@ -69,6 +84,7 @@ const handleButtonClick = (buttonID) => {
       // Display the rounded result in the user input display and update the history display.
       userInputDisplay = roundToMaxDecimalPlaces(result, 6);
       inputHistoryDisplay.innerText = inputHistory;
+      lastInputEquals = true;
     } catch (error) {
       // If the evaluation fails, show an alert with an error message.
       alert("Invalid Input");
