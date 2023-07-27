@@ -38,21 +38,21 @@ header span {
 /* Calculation history and results */
 
 .result-container {
-  width: 30%;
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  flex-wrap: wrap;
   gap: 10px;
+  width: 300px;
 }
 #results {
   font-size: 2rem;
-  height: 2rem;
+  min-height: 2rem;
+  word-wrap: break-word;
 }
 
 #inputHistory {
   color: #818181;
-  height: 1rem;
+  min-height: 1rem;
+  word-wrap: break-word;
 }
 /* User Input Buttons  */
 
@@ -173,6 +173,6 @@ footer span {
 
   .result-container {
     width: 278px;
-    flex-wrap: nowrap;
+    height: 150px;
   }
 }
