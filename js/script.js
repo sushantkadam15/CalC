@@ -23,9 +23,10 @@ const buttonValues = {
 let userInputDisplay = "";
 let inputHistory = "";
 
-// Get references to the HTML elements for displaying the result and input history.
+// Get references to the HTML elements for displaying the result, input history and error message.
 const resultDisplay = document.getElementById("results");
 const inputHistoryDisplay = document.getElementById("inputHistory");
+const errorMessage = document.getElementById("errorMessage");
 
 // Function to update the result display with the user input.
 const resultUpdate = () => {
@@ -91,8 +92,13 @@ const handleButtonClick = (buttonID) => {
       inputHistoryDisplay.innerText = inputHistory;
       lastInputEquals = true;
     } catch (error) {
-      // If the evaluation fails, show an alert with an error message.
-      alert("Invalid Input");
+      // If the evaluation fails, show an error message.
+      errorMessage.style.display = "block";
+      resetDisplay();
+
+      setTimeout(() => {
+        errorMessage.style.display = "none";
+      }, 1000);
     }
   }
 };
