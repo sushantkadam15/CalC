@@ -1,4 +1,4 @@
-// Define an object containing the values for different buttons.
+// buttonValues containing the values for different buttons ID.
 const buttonValues = {
   one: 1,
   two: 2,
@@ -37,48 +37,44 @@ const captureUserInput = (currentInput) => {
   userInputDisplay += currentInput;
 };
 
-//Resets user input display and history
+// Function to reset user input display and history.
 const resetDisplay = () => {
   userInputDisplay = "";
   inputHistoryDisplay.innerText = "";
 };
 
-//Used to reset userInputDisplay and inputHistory after = is pressed and user continues with number input
+// Variable to keep track of whether the last input was "equals" or not.
 let lastInputEquals = false;
 
 // Function to handle button clicks and perform appropriate actions.
 const handleButtonClick = (buttonID) => {
   const currentInput = buttonValues[buttonID];
 
-  // If the button is a number or decimal point capture the input
-  if (typeof currentInput == "number" || currentInput == ".") {
-    if (lastInputEquals == false) {
+  // If the button is a number or decimal point, capture the input.
+  if (typeof currentInput === "number" || currentInput === ".") {
+    if (!lastInputEquals) {
       captureUserInput(currentInput);
-    } else if (lastInputEquals == true) {
-      // Resets the history and user input display if the user directly presses number instead of further calculation
+    } else {
+      // Reset the history and user input display if the user directly presses a number instead of continuing with a calculation.
       resetDisplay();
       lastInputEquals = false;
       captureUserInput(currentInput);
     }
-    //If the input is a valid operator, capture the input.
   } else if (
-    buttonID == "addition" ||
-    buttonID == "subtraction" ||
-    buttonID == "multiplication" ||
-    buttonID == "division"
+    buttonID === "addition" ||
+    buttonID === "subtraction" ||
+    buttonID === "multiplication" ||
+    buttonID === "division"
   ) {
-    lastInputEquals = false; // Incase the last input was "Equals to and the string was evaluated and user wishes to continue the calculation -
+    lastInputEquals = false; // In case the last input was "equals" and the string was evaluated, the user wishes to continue the calculation.
     captureUserInput(currentInput);
-  } else if (buttonID == "allClear") {
+  } else if (buttonID === "allClear") {
     // If the button is the "All Clear" button, reset the user input and history.
     resetDisplay();
-  } else if (buttonID == "backspace") {
+  } else if (buttonID === "backspace") {
     // If the button is the "Backspace" button, remove the last character from the user input.
-    userInputDisplay = userInputDisplay.substring(
-      0,
-      userInputDisplay.length - 1
-    );
-  } else if (buttonID == "equals") {
+    userInputDisplay = userInputDisplay.slice(0, -1);
+  } else if (buttonID === "equals") {
     try {
       // If the button is the "Equals" button, try to evaluate the user input as an expression.
       const result = eval(userInputDisplay);
@@ -96,16 +92,15 @@ const handleButtonClick = (buttonID) => {
       lastInputEquals = true;
     } catch (error) {
       // If the evaluation fails, show an alert with an error message.
-
       alert("Invalid Input");
     }
   }
 };
 
-// Get all elements with class "input-buttons" and convert the NodeList to an array
+// Get all elements with class "input-buttons" and convert the NodeList to an array.
 const inputButtons = Array.from(document.querySelectorAll(".input-buttons"));
 
-// Add an event listener to each button in the array
+// Add an event listener to each button in the array.
 inputButtons.forEach((button) => {
   button.addEventListener("click", (event) => {
     handleButtonClick(event.target.id);
@@ -113,27 +108,29 @@ inputButtons.forEach((button) => {
   });
 });
 
-// Add an even to get the keyboard input
+// Add an event to capture keyboard input.
 document.addEventListener("keyup", (event) => {
   let currentKeyboardInput = event.key;
   console.log(currentKeyboardInput);
   const numberRegex = /^\d$/;
-  const operatorsRegex = /^[*\/+\-]$/;
 
-  // Fetches the ID value form buttonValues so that it can be used for handleButtonClick(buttonID)
+  // Fetches the ID value from buttonValues so that it can be used for handleButtonClick(buttonID).
   const fetchButtonIdInButtonValues = (currentKeyboardInput) => {
     for (let key in buttonValues) {
-      if (buttonValues[key] == currentKeyboardInput) {
+      if (buttonValues[key] === currentKeyboardInput) {
         return key;
       }
     }
   };
 
+  // Converts the keyboard input to  integer if it is number.
   currentKeyboardInput = numberRegex.test(currentKeyboardInput)
     ? parseInt(currentKeyboardInput)
     : currentKeyboardInput;
   currentKeyboardInput =
-    currentKeyboardInput == "=" ? "equals" : currentKeyboardInput;
+    currentKeyboardInput === "=" || currentKeyboardInput === "Enter"
+      ? "equals"
+      : currentKeyboardInput;
 
   const buttonID = fetchButtonIdInButtonValues(currentKeyboardInput);
   handleButtonClick(buttonID);
