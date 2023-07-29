@@ -15,22 +15,22 @@ const buttonValues = {
   multiplication: "*",
   division: "/",
   decimalpoint: ".",
+  backspace: "Backspace",
+  equals: "equals",
 };
+
+// Initialize variables to store user input and the current number being entered.
+let userInputDisplay = "";
+let inputHistory = "";
 
 // Get references to the HTML elements for displaying the result and input history.
 const resultDisplay = document.getElementById("results");
 const inputHistoryDisplay = document.getElementById("inputHistory");
 
-// Initialize variables to store user input and the current number being entered.
-let userInputDisplay = "";
-let inputHistory = "";
-let lastInputEquals = false;
-
-// Function to round a number to a specific number of decimal places.
-function roundToMaxDecimalPlaces(number, maxDecimals) {
-  const roundedNumber = Number(number.toFixed(maxDecimals));
-  return roundedNumber;
-}
+// Function to update the result display with the user input.
+const resultUpdate = () => {
+  resultDisplay.innerText = userInputDisplay;
+};
 
 // Function to capture the user input and update the display accordingly.
 const captureUserInput = (currentInput) => {
@@ -43,11 +43,14 @@ const resetDisplay = () => {
   inputHistoryDisplay.innerText = "";
 };
 
+//Used to reset userInputDisplay and inputHistory after = is pressed and user continues with number input
+let lastInputEquals = false;
+
 // Function to handle button clicks and perform appropriate actions.
 const handleButtonClick = (buttonID) => {
   const currentInput = buttonValues[buttonID];
 
-  // If the button is a number capture the input
+  // If the button is a number or decimal point capture the input
   if (typeof currentInput == "number" || currentInput == ".") {
     if (lastInputEquals == false) {
       captureUserInput(currentInput);
@@ -64,7 +67,7 @@ const handleButtonClick = (buttonID) => {
     buttonID == "multiplication" ||
     buttonID == "division"
   ) {
-    lastInputEquals = false; // If the last input was "Equals to: and user wishes to continue the calculation -
+    lastInputEquals = false; // Incase the last input was "Equals to and the string was evaluated and user wishes to continue the calculation -
     captureUserInput(currentInput);
   } else if (buttonID == "allClear") {
     // If the button is the "All Clear" button, reset the user input and history.
@@ -76,24 +79,27 @@ const handleButtonClick = (buttonID) => {
       userInputDisplay.length - 1
     );
   } else if (buttonID == "equals") {
-    // If the button is the "Equals" button, try to evaluate the user input as an expression.
     try {
+      // If the button is the "Equals" button, try to evaluate the user input as an expression.
       const result = eval(userInputDisplay);
       inputHistory = userInputDisplay;
+
+      // Function to round a number to a specific number of decimal places.
+      function roundToMaxDecimalPlaces(number, maxDecimals) {
+        const roundedNumber = Number(number.toFixed(maxDecimals));
+        return roundedNumber;
+      }
+
       // Display the rounded result in the user input display and update the history display.
       userInputDisplay = roundToMaxDecimalPlaces(result, 6);
       inputHistoryDisplay.innerText = inputHistory;
       lastInputEquals = true;
     } catch (error) {
       // If the evaluation fails, show an alert with an error message.
+
       alert("Invalid Input");
     }
   }
-};
-
-// Function to update the result display with the user input.
-const resultUpdate = () => {
-  resultDisplay.innerText = userInputDisplay;
 };
 
 // Get all elements with class "input-buttons" and convert the NodeList to an array
@@ -105,4 +111,31 @@ inputButtons.forEach((button) => {
     handleButtonClick(event.target.id);
     resultUpdate();
   });
+});
+
+// Add an even to get the keyboard input
+document.addEventListener("keyup", (event) => {
+  let currentKeyboardInput = event.key;
+  console.log(currentKeyboardInput);
+  const numberRegex = /^\d$/;
+  const operatorsRegex = /^[*\/+\-]$/;
+
+  // Fetches the ID value form buttonValues so that it can be used for handleButtonClick(buttonID)
+  const fetchButtonIdInButtonValues = (currentKeyboardInput) => {
+    for (let key in buttonValues) {
+      if (buttonValues[key] == currentKeyboardInput) {
+        return key;
+      }
+    }
+  };
+
+  currentKeyboardInput = numberRegex.test(currentKeyboardInput)
+    ? parseInt(currentKeyboardInput)
+    : currentKeyboardInput;
+  currentKeyboardInput =
+    currentKeyboardInput == "=" ? "equals" : currentKeyboardInput;
+
+  const buttonID = fetchButtonIdInButtonValues(currentKeyboardInput);
+  handleButtonClick(buttonID);
+  resultUpdate();
 });
