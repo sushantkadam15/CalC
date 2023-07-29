@@ -111,7 +111,6 @@ inputButtons.forEach((button) => {
 // Add an event to capture keyboard input.
 document.addEventListener("keyup", (event) => {
   let currentKeyboardInput = event.key;
-  console.log(currentKeyboardInput);
   const numberRegex = /^\d$/;
 
   // Fetches the ID value from buttonValues so that it can be used for handleButtonClick(buttonID).
